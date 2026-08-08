@@ -28,9 +28,6 @@ COPY --from=backend-builder /app/backend/prisma ./prisma
 # Copy built frontend static assets
 COPY --from=frontend-builder /app/frontend/dist ./public_frontend
 
-EXPOSE 5000
-
-ENV PORT=5000
 ENV NODE_ENV=production
 ENV JWT_SECRET=nexora_erp_production_secret_key_2026
 ENV DATABASE_URL="file:./dev.db"
