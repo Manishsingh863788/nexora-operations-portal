@@ -24,7 +24,6 @@ COPY backend/package*.json ./
 COPY --from=backend-builder /app/backend/node_modules ./node_modules
 COPY --from=backend-builder /app/backend/dist ./dist
 COPY --from=backend-builder /app/backend/prisma ./prisma
-COPY --from=backend-builder /app/backend/src ./src
 
 # Copy built frontend static assets
 COPY --from=frontend-builder /app/frontend/dist ./public_frontend
@@ -36,4 +35,4 @@ ENV NODE_ENV=production
 ENV JWT_SECRET=nexora_erp_production_secret_key_2026
 ENV DATABASE_URL="file:./dev.db"
 
-CMD ["sh", "-c", "npx prisma db push && npx ts-node prisma/seed.ts && node dist/server.js"]
+CMD ["sh", "-c", "npx prisma db push && node dist/server.js"]
