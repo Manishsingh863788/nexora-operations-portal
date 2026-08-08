@@ -5,10 +5,13 @@ import routes from './routes';
 import { errorHandler } from './middleware/error';
 import { config } from './config';
 
+import path from 'path';
+import fs from 'fs';
+
 const app = express();
 
 // Security & Middleware
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -33,6 +36,23 @@ app.get('/health', (_req, res) => {
 
 // API Routes
 app.use('/api', routes);
+
+// Serve Frontend Static Assets if available (Production / Single Docker deployment)
+const possibleFrontendPaths = [
+  path.join(__dirname, '../public_frontend'),
+  path.join(__dirname, '../../frontend/dist'),
+];
+
+const frontendPath = possibleFrontendPaths.find((p) => fs.existsSync(p));
+if (frontendPath) {
+  app.use(express.static(frontendPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+}
 
 // Global Error Handler
 app.use(errorHandler);
