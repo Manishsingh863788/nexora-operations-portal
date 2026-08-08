@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: nexora-backend
+    env: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma db push && npm run seed && node dist/server.js
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        value: nexora_erp_production_secret_key_2026
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: FRONTEND_URL
+        value: http://localhost:5173
