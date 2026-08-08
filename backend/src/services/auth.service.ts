@@ -21,7 +21,7 @@ export async function loginUser(input: LoginInput) {
   const token = generateToken({
     userId: user.id,
     email: user.email,
-    role: user.role,
+    role: user.role as any,
     name: user.name,
   });
 
@@ -31,7 +31,7 @@ export async function loginUser(input: LoginInput) {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role,
+      role: user.role as any,
     },
   };
 }

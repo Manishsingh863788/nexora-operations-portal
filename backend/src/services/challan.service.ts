@@ -153,9 +153,9 @@ export async function getChallans(query: ChallanQueryFilter) {
   if (query.search) {
     const searchTrimmed = query.search.trim();
     where.OR = [
-      { challanNumber: { contains: searchTrimmed, mode: 'insensitive' } },
-      { customer: { customerName: { contains: searchTrimmed, mode: 'insensitive' } } },
-      { customer: { businessName: { contains: searchTrimmed, mode: 'insensitive' } } },
+      { challanNumber: { contains: searchTrimmed } },
+      { customer: { customerName: { contains: searchTrimmed } } },
+      { customer: { businessName: { contains: searchTrimmed } } },
     ];
   }
 

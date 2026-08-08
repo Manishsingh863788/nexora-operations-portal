@@ -30,10 +30,10 @@ export async function getCustomers(query: CustomerQueryFilter) {
   if (query.search) {
     const searchLower = query.search.trim();
     where.OR = [
-      { customerName: { contains: searchLower, mode: 'insensitive' } },
-      { businessName: { contains: searchLower, mode: 'insensitive' } },
-      { mobile: { contains: searchLower, mode: 'insensitive' } },
-      { email: { contains: searchLower, mode: 'insensitive' } },
+      { customerName: { contains: searchLower } },
+      { businessName: { contains: searchLower } },
+      { mobile: { contains: searchLower } },
+      { email: { contains: searchLower } },
     ];
   }
 

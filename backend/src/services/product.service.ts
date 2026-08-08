@@ -20,15 +20,15 @@ export async function getProducts(query: ProductQueryFilter) {
   const where: Prisma.ProductWhereInput = {};
 
   if (query.category) {
-    where.category = { equals: query.category, mode: 'insensitive' };
+    where.category = { equals: query.category };
   }
 
   if (query.search) {
     const searchTrimmed = query.search.trim();
     where.OR = [
-      { name: { contains: searchTrimmed, mode: 'insensitive' } },
-      { sku: { contains: searchTrimmed, mode: 'insensitive' } },
-      { warehouseLocation: { contains: searchTrimmed, mode: 'insensitive' } },
+      { name: { contains: searchTrimmed } },
+      { sku: { contains: searchTrimmed } },
+      { warehouseLocation: { contains: searchTrimmed } },
     ];
   }
 
