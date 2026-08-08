@@ -1,4 +1,5 @@
 services:
+  # Backend REST API Service
   - type: web
     name: nexora-backend
     env: node
@@ -13,8 +14,32 @@ services:
       - key: NODE_ENV
         value: production
       - key: JWT_SECRET
-        value: nexora_erp_production_secret_key_2026
+        generateValue: true
       - key: DATABASE_URL
         value: file:./dev.db
       - key: FRONTEND_URL
-        value: http://localhost:5173
+        fromService:
+          type: web
+          name: nexora-frontend
+          property: url
+
+  # Frontend React SPA Static Site
+  - type: web
+    name: nexora-frontend
+    env: static
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: nexora-backend
+          property: url
+          suffix: /api
