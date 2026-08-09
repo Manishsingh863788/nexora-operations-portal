@@ -6,8 +6,8 @@ services:
     rootDir: backend
     region: oregon
     plan: free
-    buildCommand: npm install && npx prisma generate && npm run build
-    startCommand: npx prisma db push && node dist/server.js
+    buildCommand: npm install && DATABASE_URL="file:/data/nexora.db" npx prisma generate && npm run build
+    startCommand: DATABASE_URL="file:/data/nexora.db" npx prisma db push && node dist/server.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -21,6 +21,8 @@ services:
         value: 1d
       - key: FRONTEND_URL
         value: https://nexora-operations-portal.vercel.app
+      - key: PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING
+        value: "1"
     disk:
       name: nexora-sqlite-data
       mountPath: /data
