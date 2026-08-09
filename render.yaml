@@ -1,29 +1,41 @@
 services:
-  # ─── Backend API (Node + Express + SQLite) ────────────────────────────────
+  # ─── 1. Backend API (Node + Express + SQLite) ────────────────────────────
   - type: web
     name: nexora-backend
     runtime: node
     rootDir: backend
     region: oregon
     plan: free
-    buildCommand: npm install && DATABASE_URL="file:/data/nexora.db" npx prisma generate && npm run build
-    startCommand: DATABASE_URL="file:/data/nexora.db" npx prisma db push && node dist/server.js
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: mkdir -p /tmp/db && DATABASE_URL="file:/tmp/db/nexora.db" npx prisma db push --accept-data-loss && DATABASE_URL="file:/tmp/db/nexora.db" npx ts-node prisma/seed.ts && node dist/server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 5000
       - key: DATABASE_URL
-        value: file:/data/nexora.db
+        value: file:/tmp/db/nexora.db
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 1d
       - key: FRONTEND_URL
-        value: https://nexora-operations-portal.vercel.app
+        value: https://nexora-frontend.onrender.com
       - key: PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING
         value: "1"
-    disk:
-      name: nexora-sqlite-data
-      mountPath: /data
-      sizeGB: 1
+
+  # ─── 2. Frontend Web App (React + Vite Static Site) ──────────────────────
+  - type: web
+    name: nexora-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://nexora-backend.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
